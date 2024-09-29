@@ -1,0 +1,29 @@
+#!/bin/bash
+
+ARCHIVE="/etc/apache2/sites-available/000-default.conf"
+MODEL="/etc/apache2/sites-available/000-default.conf.model"
+
+MASK="project"
+TARGET=$1
+
+# Checagem de parâmetro
+if [ -z "$TARGET" ]; then
+  echo "Erro: você deve fornecer um nome válido de projeto"
+  exit 1
+fi
+
+# Checagem de existência do projeto
+PROJECT_PATH="/var/www/html/$TARGET/public"
+
+if [ ! -d "$PROJECT_PATH" ]; then
+  echo "Erro: o projeto '$TARGET' não existe ou não está no local correto"
+  exit 1
+fi
+
+# Sobreposição do arquivo e da máscara em seguida
+cp $MODEL $ARCHIVE
+sed -i "s|$MASK|$TARGET|g" "$ARCHIVE"
+
+chmod 777 -R /var/www/html
+echo "$TARGET foi definido como projeto ativo"
+
